@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="@string/menu_home" />
+
+        <item
+            android:id="@+id/nav_order"
+            android:title="Orders" />
+
+        <item
+            android:id="@+id/nav_faq"
+            android:title="FAQs"/>
+        <item
+            android:id="@+id/nav_wallet"
+            android:title="My Wallet"/>
+
+        <item
+            android:id="@+id/nav_goldUpgrade"
+            android:title="Gold Membership"/>
+
+    </group>
+
+
+    <item android:title="Profile">
+
+        <menu>
+
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_myProfile"
+                    android:title="My Profile" />
+                <item
+                    android:id="@+id/nav_logout"
+                    android:title="Logout" />
+            </group>
+
+        </menu>
+
+    </item>
+
+
+    <item android:title="Contact Us">
+
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/nav_sellFuel"
+                    android:title="Sell Fuel !"
+                    />
+                <item
+                    android:id="@+id/nav_contactUs"
+                    android:title="Contact Us"/>
+            </group>
+
+        </menu>
+
+    </item>
+
+</menu>

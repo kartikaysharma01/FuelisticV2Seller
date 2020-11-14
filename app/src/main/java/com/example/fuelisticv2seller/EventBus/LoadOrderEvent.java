@@ -1,4 +1,4 @@
-package com.example.fuelisticv2seller.Model.EventBus;
+package com.example.fuelisticv2seller.EventBus;
 
 public class LoadOrderEvent {
     private int status;

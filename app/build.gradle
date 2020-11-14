@@ -84,4 +84,7 @@ dependencies {
     // greenRobot EventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
 
+    // Firebase cloud messaging
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+
 }

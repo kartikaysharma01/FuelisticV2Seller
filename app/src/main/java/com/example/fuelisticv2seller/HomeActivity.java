@@ -8,13 +8,18 @@ import android.view.View;
 import android.view.Menu;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.fuelisticv2seller.Common.Common;
 import com.example.fuelisticv2seller.LoginSignUp.AppStartUpScreen;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +45,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        subscribeToTopic(Common.createTopicOrder());
 
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +81,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void subscribeToTopic(String topicOrder) {
+        FirebaseMessaging.getInstance()
+                .subscribeToTopic(topicOrder)
+                .addOnFailureListener(e -> Toast.makeText(HomeActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show()).addOnCompleteListener(task -> {
+                    if(!task.isSuccessful())
+                        Toast.makeText(this, "Failed: "+task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
@@ -97,7 +113,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 if(item.getItemId() != menuClick){
                     navController.popBackStack();
                     navController.navigate(R.id.nav_home);
-
                 }
                 break;
 

@@ -31,6 +31,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
     private NavController navController;
+    private int menuClick = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationView.getHeaderView(0);
         TextView txt_hello = headerView.findViewById(R.id.txt_hello);
         Common.setSpanString("Hello,\n", Common.currentSellerUser.getFullName(), txt_hello);
+
+        menuClick= R.id.nav_home;
+
     }
 
     @Override
@@ -88,22 +92,32 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         item.setChecked(true);
         drawer.closeDrawers();
         switch (item.getItemId()){
+
             case R.id.nav_home:
-                navController.navigate(R.id.nav_home);
+                if(item.getItemId() != menuClick){
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_home);
+
+                }
                 break;
 
             case R.id.nav_order:
-                navController.navigate(R.id.nav_order);
-                break;
+                if(item.getItemId() != menuClick){
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_order);
 
-            case R.id.nav_faq:
-                navController.navigate(R.id.nav_faq);
+                }
                 break;
 
             case R.id.nav_logout:
                 logOut();
                 break;
+
+            default:
+                menuClick=-1;
+                break;
         }
+        menuClick = item.getItemId();
         return true;
     }
 

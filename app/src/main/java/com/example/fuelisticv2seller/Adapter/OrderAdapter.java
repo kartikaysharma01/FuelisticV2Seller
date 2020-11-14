@@ -60,6 +60,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         return orderModelList.size();
     }
 
+    public OrderModel getItemAtPosition(int pos) {
+        return orderModelList.get(pos);
+    }
+
+    public void removeItem(int pos) {
+        orderModelList.remove(pos);
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.txt_order_amount)

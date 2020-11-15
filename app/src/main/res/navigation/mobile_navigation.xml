@@ -17,4 +17,9 @@
         android:label="Orders"
         tools:layout="@layout/fragment_order" />
 
+    <fragment
+        android:id="@+id/nav_myProfile"
+        android:name="com.example.fuelisticv2seller.ui.home.Profile.ProfileFragment"
+        android:label="My Profile"
+        tools:layout="@layout/profile_fragment" />
 </navigation>

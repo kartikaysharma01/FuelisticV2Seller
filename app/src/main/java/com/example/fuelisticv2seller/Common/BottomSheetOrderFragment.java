@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.fuelisticv2seller.EventBus.LoadOrderEvent;
+import com.example.fuelisticv2seller.Model.EventBus.LoadOrderEvent;
 import com.example.fuelisticv2seller.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 

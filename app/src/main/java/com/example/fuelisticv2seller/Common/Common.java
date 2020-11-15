@@ -30,7 +30,7 @@ public class Common {
     public static final String ORDER_REF = "Orders";
     public static final String NOTI_TITLE = "title";
     public static final String NOTI_CONTENT = "content";
-    private static final String TOKEN_REF = "Tokens";
+    public static final String TOKEN_REF = "Tokens";
 
 
     public static SellerUserModel currentSellerUser ;
@@ -99,7 +99,7 @@ public class Common {
                 .setContentText(content)
                 .setAutoCancel(true)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
-                /*.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.fuel_tank_logo))*/;
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_local_shipping_24));
 
         if(pendingIntent != null)
             builder.setContentIntent(pendingIntent);

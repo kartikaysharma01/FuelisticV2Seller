@@ -8,7 +8,9 @@ public class SellerUserModel {
     public SellerUserModel() {
     }
 
-    public SellerUserModel(String fullName, String phoneNo, String aadhaar, String email, String username, String password, boolean active) {
+    public SellerUserModel(String fullName, String phoneNo, String aadhaar, String email,
+                           String username, String password, boolean active)
+    {
         this.fullName = fullName;
         this.phoneNo = phoneNo;
         this.aadhaar = aadhaar;

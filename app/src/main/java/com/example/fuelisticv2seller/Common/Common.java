@@ -31,6 +31,8 @@ public class Common {
     public static final String NOTI_TITLE = "title";
     public static final String NOTI_CONTENT = "content";
     public static final String TOKEN_REF = "Tokens";
+    public static final String DRIVER_REF = "Drivers";
+    public static final String SHIPPING_ORDER_REF = "ShippingOrder";
 
 
     public static SellerUserModel currentSellerUser ;
@@ -110,11 +112,11 @@ public class Common {
 
     }
 
-    public static void updateToken(Context context, String newToken) {
+    public static void updateToken(Context context, String newToken , boolean isSeller, boolean isDriver) {
         FirebaseDatabase.getInstance()
                 .getReference(Common.TOKEN_REF)
                 .child(Common.currentSellerUser.getPhoneNo())
-                .setValue(new TokenModel(Common.currentSellerUser.getPhoneNo(), newToken))
+                .setValue(new TokenModel(Common.currentSellerUser.getPhoneNo(), newToken, isSeller , isDriver))
                 .addOnFailureListener(e -> Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show());
 
     }

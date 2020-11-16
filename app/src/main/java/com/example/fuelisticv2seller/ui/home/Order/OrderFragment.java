@@ -14,6 +14,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,13 +33,17 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fuelisticv2seller.Adapter.MyDriverSelectionAdapter;
 import com.example.fuelisticv2seller.Adapter.OrderAdapter;
+import com.example.fuelisticv2seller.Callback.IDriverLoadCallbackListener;
 import com.example.fuelisticv2seller.Common.BottomSheetOrderFragment;
 import com.example.fuelisticv2seller.Common.Common;
 import com.example.fuelisticv2seller.Common.MySwipeHelper;
+import com.example.fuelisticv2seller.Model.DriverModel;
 import com.example.fuelisticv2seller.Model.EventBus.LoadOrderEvent;
 import com.example.fuelisticv2seller.Model.FCMSendData;
 import com.example.fuelisticv2seller.Model.OrderModel;
+import com.example.fuelisticv2seller.Model.ShippingOrderModel;
 import com.example.fuelisticv2seller.Model.TokenModel;
 import com.example.fuelisticv2seller.R;
 import com.example.fuelisticv2seller.Remote.IFCMService;
@@ -47,9 +52,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -61,6 +67,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +80,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class OrderFragment extends Fragment {
+public class OrderFragment extends Fragment implements IDriverLoadCallbackListener {
 
     @BindView(R.id.recycler_orders)
     RecyclerView recycler_orders;
 
     @BindView(R.id.txt_order_filter)
     TextView txt_order_filter;
+
+    RecyclerView recycler_driver;
 
     Unbinder unbinder;
     LayoutAnimationController layoutAnimationController;
@@ -88,7 +97,11 @@ public class OrderFragment extends Fragment {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private IFCMService ifcmService;
 
+    private IDriverLoadCallbackListener driverLoadCallbackListener;
+
     private OrderViewModel orderViewModel;
+    private MyDriverSelectionAdapter myDriverSelectedAdapter;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -100,7 +113,7 @@ public class OrderFragment extends Fragment {
         initViews();
 
         orderViewModel.getMessageError().observe(getViewLifecycleOwner(), s -> {
-            Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "" + s, Toast.LENGTH_SHORT).show();
         });
 
         orderViewModel.getOrderModelMutableLiveData().observe(getViewLifecycleOwner(), orderModels -> {
@@ -119,6 +132,8 @@ public class OrderFragment extends Fragment {
     private void initViews() {
 
         ifcmService = RetrofitFCMClient.getInstance().create(IFCMService.class);
+
+        driverLoadCallbackListener = this;
 
         setHasOptionsMenu(true);
 
@@ -217,6 +232,9 @@ public class OrderFragment extends Fragment {
         if (orderModel.getOrderStatus() == 0) {                 // Placed
             layout_dialog = LayoutInflater.from(getContext())
                     .inflate(R.layout.layout_dialog_confirmed, null);
+
+            recycler_driver = layout_dialog.findViewById(R.id.recycler_drivers);
+
             builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Light_NoActionBar_Fullscreen)
                     .setView(layout_dialog);
         } else if (orderModel.getOrderStatus() == -1) {          // Cancelled
@@ -249,6 +267,45 @@ public class OrderFragment extends Fragment {
 
         // Create Dialog
         AlertDialog dialog = builder.create();
+
+        if (orderModel.getOrderStatus() == 0)
+            loadDriverList(pos, orderModel, dialog, btn_update, btn_cancel,
+                    rdi_cancelled, rdi_completed, rdi_confirmed, rdi_delete, rdi_restore_order);
+        else
+            showDialog(pos, orderModel, dialog, btn_update, btn_cancel,
+                    rdi_cancelled, rdi_completed, rdi_confirmed, rdi_delete, rdi_restore_order);
+
+
+    }
+
+    private void loadDriverList(int pos, OrderModel orderModel, AlertDialog dialog, Button btn_update, Button btn_cancel, RadioButton rdi_cancelled, RadioButton rdi_completed, RadioButton rdi_confirmed, RadioButton rdi_delete, RadioButton rdi_restore_order) {
+        List<DriverModel> tempList = new ArrayList<>();
+        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference(Common.DRIVER_REF);
+        Query driverActive = driverRef.orderByChild("active").equalTo(true);    //load only driver active by Server APP
+        driverActive.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot driverSnapshot : snapshot.getChildren()) {
+                    DriverModel driverModel = driverSnapshot.getValue(DriverModel.class);
+                    driverModel.setKey(driverSnapshot.getKey());
+                    tempList.add(driverModel);
+                }
+                driverLoadCallbackListener.onDriverLoadSuccess(pos, orderModel, tempList,
+                        dialog,
+                        btn_update, btn_cancel,
+                        rdi_cancelled, rdi_completed,
+                        rdi_confirmed, rdi_delete, rdi_restore_order);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                driverLoadCallbackListener.onDriverLoadFailed(error.getMessage());
+            }
+        });
+    }
+
+    private void showDialog(int pos, OrderModel orderModel, AlertDialog dialog, Button btn_update, Button btn_cancel, RadioButton rdi_cancelled, RadioButton rdi_completed, RadioButton rdi_confirmed, RadioButton rdi_delete, RadioButton rdi_restore_order) {
         dialog.show();
 
         // Custom Dialog
@@ -257,18 +314,106 @@ public class OrderFragment extends Fragment {
 
         btn_cancel.setOnClickListener(view -> dialog.dismiss());
         btn_update.setOnClickListener(view -> {
-            dialog.dismiss();
-            if (rdi_cancelled != null && rdi_cancelled.isChecked())
+
+            if (rdi_cancelled != null && rdi_cancelled.isChecked()) {
                 updateOrder(pos, orderModel, -1);
-            else if (rdi_confirmed != null && rdi_confirmed.isChecked())
-                updateOrder(pos, orderModel, 1);
-            else if (rdi_completed != null && rdi_completed.isChecked())
+                dialog.dismiss();
+            } else if (rdi_confirmed != null && rdi_confirmed.isChecked()) // CONFIRMED
+            {
+                DriverModel driverModel = null;
+                if (myDriverSelectedAdapter != null) {
+                    driverModel = myDriverSelectedAdapter.getSelectedDriver();
+                    if (driverModel != null) {
+                        crateShippingOrder(pos, driverModel, orderModel, dialog);
+//                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Please assign a Bowser(Driver)", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else if (rdi_completed != null && rdi_completed.isChecked()) {
                 updateOrder(pos, orderModel, 2);
-            else if (rdi_restore_order != null && rdi_restore_order.isChecked())
+                dialog.dismiss();
+            } else if (rdi_restore_order != null && rdi_restore_order.isChecked()) {
                 updateOrder(pos, orderModel, 0);
-            else if (rdi_delete != null && rdi_delete.isChecked())
+                dialog.dismiss();
+            } else if (rdi_delete != null && rdi_delete.isChecked()) {
                 deleteOrder(pos, orderModel);
+                dialog.dismiss();
+            }
         });
+    }
+
+    private void crateShippingOrder(int pos, DriverModel driverModel, OrderModel orderModel, AlertDialog dialog) {
+        ShippingOrderModel shippingOrder = new ShippingOrderModel();
+        shippingOrder.setDriverPhone(driverModel.getPhoneNo());
+        shippingOrder.setDriverName(driverModel.getFullName());
+        shippingOrder.setDriverLicensePlate(driverModel.getLicensePlate());
+        shippingOrder.setOrderModel(orderModel);
+        shippingOrder.setCurrentLat(-1.0);
+        shippingOrder.setCurrentLng(-1.0);
+
+        FirebaseDatabase.getInstance()
+                .getReference(Common.SHIPPING_ORDER_REF)
+                .push()
+                .setValue(shippingOrder)
+                .addOnFailureListener(e -> {
+                    dialog.dismiss();
+                    Toast.makeText(getContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                dialog.dismiss();
+                Toast.makeText(getContext(), "Delivery is assigned to " + driverModel.getFullName(), Toast.LENGTH_SHORT).show();
+                // get token of user
+                FirebaseDatabase.getInstance()
+                        .getReference(Common.TOKEN_REF)
+                        .child(driverModel.getKey())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    TokenModel tokenModel = snapshot.getValue(TokenModel.class);
+                                    Map<String, String> notiData = new HashMap<>();
+                                    notiData.put(Common.NOTI_TITLE, "You have a new order to deliver!!");
+                                    notiData.put(Common.NOTI_CONTENT, new StringBuilder("You have a new order to deliver to ")
+                                            .append(orderModel.getUserName())
+                                            .append(" on ")
+                                            .append(orderModel.getDeliveryDate()).toString());
+
+                                    FCMSendData sendData = new FCMSendData(tokenModel.getToken(), notiData);
+
+                                    compositeDisposable.add(ifcmService.sendNotification(sendData)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(fcmResponse -> {
+                                                dialog.dismiss();
+                                                if (fcmResponse.getSuccess() == 1) {
+                                                    updateOrder(pos, orderModel, 1);
+//                                                            Toast.makeText(getContext(), "Order Updated Successfully!", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(getContext(), "Failed to send to Driver! Order is not Confirmed. Try again later!", Toast.LENGTH_LONG).show();
+                                                }
+
+                                            }, throwable -> {
+                                                dialog.dismiss();
+                                                Toast.makeText(getContext(), "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }));
+                                } else {
+                                    dialog.dismiss();
+                                    Toast.makeText(getContext(), "Token not found!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                dialog.dismiss();
+                                Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+//                        updateOrder(pos, orderModel, 1);
+            }
+        });
+
+
     }
 
     private void deleteOrder(int pos, OrderModel orderModel) {
@@ -314,44 +459,40 @@ public class OrderFragment extends Fragment {
                         android.app.AlertDialog dialog = new SpotsDialog.Builder().setContext(getContext()).setCancelable(false).build();
                         dialog.show();
 
+                        // get user token
                         FirebaseDatabase.getInstance()
                                 .getReference(Common.TOKEN_REF)
                                 .child(orderModel.getUserPhone())
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if(snapshot.exists())
-                                        {
+                                        if (snapshot.exists()) {
                                             TokenModel tokenModel = snapshot.getValue(TokenModel.class);
-                                            Map<String,String> notiData = new HashMap<>();
+                                            Map<String, String> notiData = new HashMap<>();
                                             notiData.put(Common.NOTI_TITLE, "Your Order status has changed!!");
                                             notiData.put(Common.NOTI_CONTENT, new StringBuilder("Your Order ")
-                                            .append(orderModel.getKey())
-                                            .append("just got ")
-                                            .append(Common.convertStatusToString(status)).toString());
+                                                    .append(orderModel.getKey())
+                                                    .append(" just got ")
+                                                    .append(Common.convertStatusToString(status)).toString());
 
-                                            FCMSendData sendData = new FCMSendData(tokenModel.getToken() , notiData);
+                                            FCMSendData sendData = new FCMSendData(tokenModel.getToken(), notiData);
 
                                             compositeDisposable.add(ifcmService.sendNotification(sendData)
                                                     .subscribeOn(Schedulers.io())
                                                     .observeOn(AndroidSchedulers.mainThread())
                                                     .subscribe(fcmResponse -> {
                                                         dialog.dismiss();
-                                                        if(fcmResponse.getSuccess()==1)
-                                                        {
+                                                        if (fcmResponse.getSuccess() == 1) {
                                                             Toast.makeText(getContext(), "Order Updated Successfully!", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                        else {
+                                                        } else {
                                                             Toast.makeText(getContext(), "Order Updated Successfully but failed to send notification!", Toast.LENGTH_SHORT).show();
                                                         }
 
                                                     }, throwable -> {
                                                         dialog.dismiss();
-                                                        Toast.makeText(getContext(), ""+throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getContext(), "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                                     }));
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             dialog.dismiss();
                                             Toast.makeText(getContext(), "Token not found!", Toast.LENGTH_SHORT).show();
                                         }
@@ -360,7 +501,7 @@ public class OrderFragment extends Fragment {
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
                                         dialog.dismiss();
-                                        Toast.makeText(getContext(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -426,4 +567,28 @@ public class OrderFragment extends Fragment {
         orderViewModel.loadOrderByStatus(event.getStatus());
     }
 
+    @Override
+    public void onDriverLoadSuccess(List<DriverModel> driverModelList) {
+        //DO NOTHING
+    }
+
+    @Override
+    public void onDriverLoadSuccess(int pos, OrderModel orderModel, List<DriverModel> driverModels, AlertDialog dialog, Button btn_update, Button btn_cancel, RadioButton rdi_cancelled, RadioButton rdi_completed, RadioButton rdi_confirmed, RadioButton rdi_delete, RadioButton rdi_restore_order) {
+        if (recycler_driver != null) {
+            recycler_driver.setHasFixedSize(true);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recycler_driver.setLayoutManager(layoutManager);
+            recycler_driver.addItemDecoration(new DividerItemDecoration(getContext(), layoutManager.getOrientation()));
+
+            myDriverSelectedAdapter = new MyDriverSelectionAdapter(getContext(), driverModels);
+            recycler_driver.setAdapter(myDriverSelectedAdapter);
+        }
+        showDialog(pos, orderModel, dialog, btn_update, btn_cancel, rdi_cancelled, rdi_completed, rdi_confirmed, rdi_delete, rdi_restore_order);
+
+    }
+
+    @Override
+    public void onDriverLoadFailed(String message) {
+        Toast.makeText(getContext(), "" + message, Toast.LENGTH_SHORT).show();
+    }
 }

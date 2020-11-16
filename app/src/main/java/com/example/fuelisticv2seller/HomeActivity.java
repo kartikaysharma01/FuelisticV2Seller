@@ -14,11 +14,14 @@ import com.example.fuelisticv2seller.Common.Common;
 import com.example.fuelisticv2seller.LoginSignUp.AppStartUpScreen;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.annotation.NonNull;
@@ -46,7 +49,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         subscribeToTopic(Common.createTopicOrder());
+        updateToken();
 
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +67,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_order, R.id.nav_myProfile)
+                R.id.nav_home, R.id.nav_order, R.id.nav_driver, R.id.nav_myProfile)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -79,6 +84,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         menuClick= R.id.nav_home;
 
+    }
+
+    private void updateToken() {
+            FirebaseInstanceId.getInstance()
+                    .getInstanceId()
+                    .addOnFailureListener(e -> Toast.makeText(HomeActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                        @Override
+                        public void onSuccess(InstanceIdResult instanceIdResult) {
+                            Common.updateToken(HomeActivity.this, instanceIdResult.getToken(),
+                                    false,
+                                    true);
+                        }
+                    });
     }
 
     private void subscribeToTopic(String topicOrder) {
@@ -128,6 +147,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 if(item.getItemId() != menuClick){
                     navController.popBackStack();
                     navController.navigate(R.id.nav_myProfile);
+                }
+                break;
+
+            case R.id.nav_driver:
+                if(item.getItemId() != menuClick){
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_driver);
                 }
                 break;
 

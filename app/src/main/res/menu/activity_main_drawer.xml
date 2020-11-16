@@ -10,18 +10,14 @@
 
         <item
             android:id="@+id/nav_order"
-            android:title="Orders" />
+            android:title="Orders"
+            android:icon="@drawable/ic_baseline_monetization_on_24"/>
 
         <item
-            android:id="@+id/nav_faq"
-            android:title="FAQs"/>
-        <item
-            android:id="@+id/nav_wallet"
-            android:title="My Wallet"/>
-
-        <item
-            android:id="@+id/nav_goldUpgrade"
-            android:title="Gold Membership"/>
+            android:id="@+id/nav_driver"
+            android:title="Drivers"
+            android:icon="@drawable/ic_baseline_local_shipping_24"
+            />
 
     </group>
 
@@ -48,11 +44,6 @@
 
         <menu>
             <group android:checkableBehavior="single">
-
-                <item
-                    android:id="@+id/nav_sellFuel"
-                    android:title="Sell Fuel !"
-                    />
                 <item
                     android:id="@+id/nav_contactUs"
                     android:title="Contact Us"/>

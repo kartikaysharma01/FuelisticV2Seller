@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                                 gotoHomeActivity(sellerUserModel);
                             }
                             else{
-                                Toast.makeText(MainActivity.this, "You are not yet authorised!! Contact your Fuelistic representative for further information.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "You are not yet authorised!! Contact your Fuelistic representative for further information.", Toast.LENGTH_LONG).show();
                                 hangInThere.setVisibility(View.VISIBLE);
                                 authSoon.setVisibility(View.VISIBLE);
                             }

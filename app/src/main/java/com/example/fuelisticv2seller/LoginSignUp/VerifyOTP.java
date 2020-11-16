@@ -155,7 +155,7 @@ public class VerifyOTP extends AppCompatActivity {
                 }).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         dialog.dismiss();
-                        Toast.makeText(VerifyOTP.this, "Congratulations!! Registration Complete. You will be authorized by Team Fuelistic soon." , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VerifyOTP.this, "Congratulations!! Registration Complete. You will be authorized by Team Fuelistic soon." , Toast.LENGTH_LONG).show();
                         startActivity(new Intent(VerifyOTP.this, MainActivity.class));
                         finish();
                     }

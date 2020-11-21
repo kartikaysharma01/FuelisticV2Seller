@@ -35,14 +35,14 @@ public class Common {
     public static final String SHIPPING_ORDER_REF = "ShippingOrder";
 
 
-    public static SellerUserModel currentSellerUser ;
+    public static SellerUserModel currentSellerUser;
 
     public static void setSpanString(String welcome, String fullName, TextView textView) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
         builder.append(welcome);
         SpannableString spannableString = new SpannableString(fullName);
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-        spannableString.setSpan(boldSpan, 0,fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(boldSpan, 0, fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         builder.append(spannableString);
         textView.setText(builder, TextView.BufferType.SPANNABLE);
     }
@@ -52,14 +52,14 @@ public class Common {
         builder.append(welcome);
         SpannableString spannableString = new SpannableString(fullName);
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-        spannableString.setSpan(boldSpan, 0,fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(parseColor), 0,fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(boldSpan, 0, fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(parseColor), 0, fullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         builder.append(spannableString);
         textView.setText(builder, TextView.BufferType.SPANNABLE);
     }
 
     public static String convertStatusToString(int orderStatus) {
-        switch (orderStatus){
+        switch (orderStatus) {
             case 0:
                 return "Placed";
             case 1:
@@ -79,12 +79,11 @@ public class Common {
 
     public static void showNotification(Context context, int id, String title, String content, Intent intent) {
         PendingIntent pendingIntent = null;
-        if(intent != null)
+        if (intent != null)
             pendingIntent = PendingIntent.getActivity(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         String NOTIFICATION_CHANNEL_ID = "fuelistic_v2";
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O)
-        {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     "Fuelistic V2", NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel.setDescription("Fuelistic V2");
@@ -103,22 +102,43 @@ public class Common {
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_local_shipping_24));
 
-        if(pendingIntent != null)
+        if (pendingIntent != null)
             builder.setContentIntent(pendingIntent);
         Notification notification = builder.build();
         notificationManager.notify(id, notification);
 
 
-
     }
 
-    public static void updateToken(Context context, String newToken , boolean isSeller, boolean isDriver) {
+    public static void updateToken(Context context, String newToken, boolean isSeller, boolean isDriver) {
         FirebaseDatabase.getInstance()
                 .getReference(Common.TOKEN_REF)
                 .child(Common.currentSellerUser.getPhoneNo())
-                .setValue(new TokenModel(Common.currentSellerUser.getPhoneNo(), newToken, isSeller , isDriver))
-                .addOnFailureListener(e -> Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show());
+                .setValue(new TokenModel(Common.currentSellerUser.getPhoneNo(), newToken, isSeller, isDriver))
+                .addOnFailureListener(e -> Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show());
 
+    }
+
+    public static String getDayOfWeek(int i) {
+        i = i - 1;
+        switch (i) {
+            case 1:
+                return "Monday";
+            case 2:
+                return "Tuesday";
+            case 3:
+                return "Wednesday";
+            case 4:
+                return "Thursday";
+            case 5:
+                return "Friday";
+            case 6:
+                return "Saturday";
+            case 7:
+                return "Sunday";
+            default:
+                return "Unknown";
+        }
     }
 
 }

@@ -354,7 +354,7 @@ public class OrderFragment extends Fragment implements IDriverLoadCallbackListen
 
         FirebaseDatabase.getInstance()
                 .getReference(Common.SHIPPING_ORDER_REF)
-                .push()
+                .child(orderModel.getKey())
                 .setValue(shippingOrder)
                 .addOnFailureListener(e -> {
                     dialog.dismiss();

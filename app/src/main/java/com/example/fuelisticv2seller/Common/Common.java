@@ -33,6 +33,7 @@ public class Common {
     public static final String TOKEN_REF = "Tokens";
     public static final String DRIVER_REF = "Drivers";
     public static final String SHIPPING_ORDER_REF = "ShippingOrder";
+    public static final String IS_OPEN_ACTIVITY_NEW_ORDER = "isOpenActivityNewOrder";
 
 
     public static SellerUserModel currentSellerUser;

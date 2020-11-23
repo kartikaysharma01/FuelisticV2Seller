@@ -340,9 +340,6 @@
 
     </ScrollView>
 
-
-
-
     <LinearLayout
         android:id="@+id/layout_button"
         android:layout_alignParentBottom="true"

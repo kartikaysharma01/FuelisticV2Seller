@@ -63,13 +63,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         Common.setSpanStringColor("Quantity(in lt.): ", orderModelList.get(position).getQuantity(),
                 holder.txt_order_amount, Color.parseColor("#4B647D"));
 
-        holder.setRecyclerClickListener(new IRecyclerClickListener() {
-            @Override
-            public void onItemClickListener(View view, int position) {
-                showDialog(position);
-
-            }
-        });
+        holder.setRecyclerClickListener((view, position1) -> showDialog(position1));
 
     }
 

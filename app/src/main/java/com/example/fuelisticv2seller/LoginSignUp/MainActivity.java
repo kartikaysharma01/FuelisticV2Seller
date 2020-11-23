@@ -123,7 +123,10 @@ public class MainActivity extends AppCompatActivity {
     private void gotoHomeActivity(SellerUserModel sellerUserModel) {
         dialog.dismiss();
         Common.currentSellerUser = sellerUserModel;
-        startActivity(new Intent(MainActivity.this, HomeActivity.class));
+
+        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+        intent.putExtra(Common.IS_OPEN_ACTIVITY_NEW_ORDER, getIntent().getBooleanExtra(Common.IS_OPEN_ACTIVITY_NEW_ORDER,false));
+        startActivity(intent);
         finish();
     }
 

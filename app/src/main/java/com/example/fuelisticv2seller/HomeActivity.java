@@ -67,13 +67,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_order, R.id.nav_driver, R.id.nav_myProfile)
+                 R.id.nav_order, R.id.nav_home,R.id.nav_driver, R.id.nav_myProfile)
                 .setDrawerLayout(drawer)
                 .build();
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupWithNavController( navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
@@ -82,8 +82,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         TextView txt_hello = headerView.findViewById(R.id.txt_hello);
         Common.setSpanString("Hello,\n", Common.currentSellerUser.getFullName(), txt_hello);
 
-        menuClick= R.id.nav_home;
+        menuClick= R.id.nav_order;      //Default
 
+        checkIsOpenFromActivity();
+
+
+
+    }
+
+    private void checkIsOpenFromActivity() {
+        boolean isOpenFromNewOrder = getIntent().getBooleanExtra(Common.IS_OPEN_ACTIVITY_NEW_ORDER, false);
+        if(isOpenFromNewOrder){
+            navController.popBackStack();
+            navController.navigate(R.id.nav_order);
+            menuClick = R.id.nav_order;
+        }
     }
 
     private void updateToken() {
@@ -94,8 +107,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void onSuccess(InstanceIdResult instanceIdResult) {
                             Common.updateToken(HomeActivity.this, instanceIdResult.getToken(),
-                                    false,
-                                    true);
+                                    true,
+                                    false);
                         }
                     });
     }

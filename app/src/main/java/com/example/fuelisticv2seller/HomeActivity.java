@@ -67,7 +67,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                 R.id.nav_order, R.id.nav_home,R.id.nav_driver, R.id.nav_myProfile)
+                 R.id.nav_order, R.id.nav_home,R.id.nav_driver, R.id.nav_myProfile, R.id.nav_contactUs)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -170,6 +170,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
 
+            case R.id.nav_contactUs:
+                if(item.getItemId() != menuClick){
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_contactUs);
+                }
+                break;
+
             case R.id.nav_logout:
                 logOut();
                 break;
@@ -184,7 +191,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void logOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("SignOut")
+        builder.setTitle("LogOut")
                 .setMessage("Are you sure you want to log out?")
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     @Override

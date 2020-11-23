@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
+
+    <Button
+        android:id="@+id/btn_call"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        android:text="Call +91 1111111111"
+        android:textColor="@color/colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
+
+    <Button
+        android:id="@+id/btn_email"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:padding="8dp"
+        android:textAllCaps="false"
+        android:background="@android:color/white"
+        android:text="EMAIL helpdesk.fuelistic@gmail.com"
+        android:textColor="@color/colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
+
+
+</LinearLayout>

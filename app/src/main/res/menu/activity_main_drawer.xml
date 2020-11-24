@@ -17,7 +17,8 @@
             />
 
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_send_news"
+            android:icon="@drawable/ic_baseline_volume_up_24"
             android:title="@string/menu_home" />
 
     </group>

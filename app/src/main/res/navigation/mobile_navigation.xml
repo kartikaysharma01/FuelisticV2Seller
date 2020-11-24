@@ -24,11 +24,6 @@
         android:label="My Profile"
         tools:layout="@layout/profile_fragment" />
 
-    <fragment
-        android:id="@+id/nav_home"
-        android:name="com.example.fuelisticv2seller.ui.home.Home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_contactUs"

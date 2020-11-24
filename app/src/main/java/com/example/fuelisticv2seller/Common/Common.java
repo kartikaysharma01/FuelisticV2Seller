@@ -34,6 +34,8 @@ public class Common {
     public static final String DRIVER_REF = "Drivers";
     public static final String SHIPPING_ORDER_REF = "ShippingOrder";
     public static final String IS_OPEN_ACTIVITY_NEW_ORDER = "isOpenActivityNewOrder";
+    public static final String IS_SEND_IMAGE = "IS_SEND_IMAGE";
+    public static final String IMAGE_URL = "IMAGE_URL";
 
 
     public static SellerUserModel currentSellerUser;
@@ -142,4 +144,7 @@ public class Common {
         }
     }
 
+    public static String getNewsTopic() {
+        return new StringBuilder("/topics/news").toString();
+    }
 }

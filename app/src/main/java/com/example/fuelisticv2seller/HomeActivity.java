@@ -37,9 +37,9 @@ import androidx.appcompat.widget.Toolbar;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private AppBarConfiguration mAppBarConfiguration;
-    private DrawerLayout drawer;
-    private NavController navController;
-    private int menuClick = -1;
+        private DrawerLayout drawer;
+        private NavController navController;
+        private int menuClick = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

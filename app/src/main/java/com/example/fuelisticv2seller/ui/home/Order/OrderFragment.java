@@ -345,6 +345,7 @@ public class OrderFragment extends Fragment implements IDriverLoadCallbackListen
 
     private void crateShippingOrder(int pos, DriverModel driverModel, OrderModel orderModel, AlertDialog dialog) {
         ShippingOrderModel shippingOrder = new ShippingOrderModel();
+//        shippingOrder.setSellerKey(Common.currentSellerUser.getSeller());
         shippingOrder.setDriverPhone(driverModel.getPhoneNo());
         shippingOrder.setDriverName(driverModel.getFullName());
         shippingOrder.setDriverLicensePlate(driverModel.getLicensePlate());
@@ -364,6 +365,7 @@ public class OrderFragment extends Fragment implements IDriverLoadCallbackListen
                 dialog.dismiss();
                 Toast.makeText(getContext(), "Delivery is assigned to " + driverModel.getFullName(), Toast.LENGTH_SHORT).show();
                 // get token of user
+
                 FirebaseDatabase.getInstance()
                         .getReference(Common.TOKEN_REF)
                         .child(driverModel.getKey())
@@ -459,11 +461,11 @@ public class OrderFragment extends Fragment implements IDriverLoadCallbackListen
                         android.app.AlertDialog dialog = new SpotsDialog.Builder().setContext(getContext()).setCancelable(false).build();
                         dialog.show();
 
-                        // get user token
-                        FirebaseDatabase.getInstance()
-                                .getReference(Common.TOKEN_REF)
-                                .child(orderModel.getUserPhone())
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                            // get user token
+                            FirebaseDatabase.getInstance()
+                                    .getReference(Common.TOKEN_REF)
+                                    .child(orderModel.getUserPhone())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         if (snapshot.exists()) {

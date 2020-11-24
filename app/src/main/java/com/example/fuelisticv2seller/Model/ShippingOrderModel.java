@@ -6,7 +6,17 @@ public class ShippingOrderModel {
     private OrderModel orderModel;
     private boolean isStartTrip;
 
+    private String sellerKey;
+
     public ShippingOrderModel() {
+    }
+
+    public String getSellerKey() {
+        return sellerKey;
+    }
+
+    public void setSellerKey(String sellerKey) {
+        this.sellerKey = sellerKey;
     }
 
     public String getDriverPhone() {

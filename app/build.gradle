@@ -64,18 +64,20 @@ dependencies {
     //FOR USER PERMISSION
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
 
     // Material Design
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android.material:material:1.2.1'
 
     // FIREBASE
-    implementation 'com.firebaseui:firebase-ui-auth:5.1.0'
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
-    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation platform('com.google.firebase:firebase-bom:26.0.0')
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -91,6 +93,6 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     // Firebase cloud messaging
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
 
 }

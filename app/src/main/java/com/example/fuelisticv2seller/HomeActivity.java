@@ -104,7 +104,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_order,  R.id.nav_driver, R.id.nav_myProfile, R.id.nav_contactUs)
+                R.id.nav_order, R.id.nav_driver, R.id.nav_myProfile, R.id.nav_contactUs)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -272,29 +272,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             } else if (rdb_link.isChecked()) {
                 sendNews(edt_title.getText().toString(), edt_content.getText().toString(), edt_link.getText().toString());
             } else if (rdb_image.isChecked()) {
-                AlertDialog dialog = new AlertDialog.Builder(this).setMessage("Uploading...").create();
-                dialog.show();
 
-                String file_name = UUID.randomUUID().toString();
-                StorageReference newsImages = storageReference.child("news/" + file_name);
-                newsImages.putFile(imgUri)
-                        .addOnFailureListener(e -> {
-                            dialog.dismiss();
-                            Toast.makeText(HomeActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }).addOnSuccessListener(taskSnapshot -> {
-                            dialog.dismiss();
-                            newsImages.getDownloadUrl().addOnSuccessListener(uri -> {
-                            sendNews(edt_title.getText().toString(), edt_content.getText().toString(), uri.toString());
-                    });
+                if (imgUri != null) {
+                    AlertDialog dialog = new AlertDialog.Builder(this).setMessage("Uploading...").create();
+                    dialog.show();
 
-                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                        double progress= Math.round((100.0 * snapshot.getBytesTransferred()/snapshot.getTotalByteCount()));
-                        dialog.setMessage(new StringBuilder("Uploading: ").append(progress).append("%"));
+                    String file_name = UUID.randomUUID().toString();  //UUID.randomUUID().toString();
+                    StorageReference newsImages = storageReference.child("news/" + file_name);
+                    newsImages.putFile(imgUri)
+                            .addOnFailureListener(e -> {
+                                dialog.dismiss();
+                                Toast.makeText(HomeActivity.this, "well" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }).addOnSuccessListener(taskSnapshot -> {
+                                dialog.dismiss();
+                                newsImages.getDownloadUrl().addOnSuccessListener(uri -> { sendNews(edt_title.getText().toString(), edt_content.getText().toString(), uri.toString());
+                        });
 
-                    }
-                });
+                            }).addOnProgressListener(snapshot -> {
+                                double progress = Math.round((100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount()));
+                                dialog.setMessage(new StringBuilder("Uploading: ").append(progress).append("%"));
+
+                            });
+                }
 
             }
 
@@ -385,14 +384,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK)
-        {
-            if(data != null && data.getData()!=null)
-            {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getData() != null) {
                 imgUri = data.getData();
                 img_upload.setImageURI(imgUri);
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override

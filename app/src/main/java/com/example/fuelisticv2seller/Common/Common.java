@@ -103,7 +103,8 @@ public class Common {
                 .setContentText(content)
                 .setAutoCancel(true)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_local_shipping_24));
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_baseline_local_shipping_24))
+                .setStyle(new NotificationCompat.BigTextStyle(builder));
 
         if (pendingIntent != null)
             builder.setContentIntent(pendingIntent);
